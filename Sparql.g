@@ -13,18 +13,22 @@ options {
 
 // $<Parser
 
+/* sparql 1.0 r1 */
 query
     : prologue ( selectQuery | constructQuery | describeQuery | askQuery ) EOF
     ;
 
+/* sparql 1.0 r2 */
 prologue
     : baseDecl? prefixDecl*
     ;
 
+/* sparql 1.0 r3 */
 baseDecl
     : BASE IRI_REF
     ;
 
+/* sparql 1.0 r4 */
 prefixDecl
     : PREFIX PNAME_NS IRI_REF
     ;
@@ -42,7 +46,7 @@ update
     ;
 
 modify
-    : MODIFY (graphIRI)* DELETE constructTemplate INSERT constructTemplate updatePattern?
+    : MODIFY (graphIri)* DELETE constructTemplate INSERT constructTemplate updatePattern?
     ;
 
 delete
@@ -58,7 +62,7 @@ deleteTemplate
     ;
 
 insert
-    : INSERT (insertData | insertTEmplate)
+    : INSERT (insertData | insertTemplate)
     ;
 
 insertData
@@ -98,47 +102,56 @@ updatePattern
     : WHERE? groupGraphPattern
     ;
 
-
+/* sparql 1.0 r5 */
 selectQuery
     : SELECT ( DISTINCT | REDUCED )? ( variable+ | ASTERISK ) datasetClause* whereClause solutionModifier 
 {
-echo "whereClause= " . $whereClause.text . "\n";
-echo "selectQuery= " . $selectQuery.text . "\n";
+//echo "whereClause= " . $whereClause.text . "\n";
+//echo "selectQuery= " . $selectQuery.text . "\n";
 }
     ;
 
+/* sparql 1.0 r6 */
 constructQuery
     : CONSTRUCT constructTemplate datasetClause* whereClause solutionModifier
     ;
 
+/* sparql 1.0 r7 */
 describeQuery
     : DESCRIBE ( varOrIRIref+ | ASTERISK ) datasetClause* whereClause? solutionModifier
     ;
 
+/* sparql 1.0 r8 */
 askQuery
     : ASK datasetClause* whereClause
     ;
 
+/* sparql 1.0 r9 */
 datasetClause
     : FROM ( defaultGraphClause | namedGraphClause )
     ;
 
+/* sparql 1.0 r10 */
 defaultGraphClause
     : sourceSelector
     ;
 
+/* sparql 1.0 r11 */
 namedGraphClause
     : NAMED sourceSelector
     ;
 
+/* sparql 1.0 r12 */
 sourceSelector
     : iriRef
     ;
 
+/* sparql 1.0 r13 */
 whereClause
     : WHERE? groupGraphPattern
     ;
 
+/* sparql 1.0 r14 */
 solutionModifier
     : groupClause? havingClause? orderClause? limitOffsetClauses?
     ;
@@ -159,140 +172,269 @@ havingCondition
 	: constraint
 	;
 
+/* sparql 1.0 r15 */
 limitOffsetClauses
-    : ( limitClause offsetClause? | offsetClause limitClause? )
+    : limitClause offsetClause? 
+    | offsetClause limitClause?
     ;
 
+/* sparql 1.0 r16 */
 orderClause
     : ORDER BY orderCondition+
     ;
 
+/* sparql 1.0 r17 */
 orderCondition
     : ( ( ASC | DESC ) brackettedExpression )
-    | ( constraint | variable )
+    | ( constraint | variable)
     ;
 
+/* sparql 1.0 r18 */
 limitClause
     : LIMIT INTEGER
     ;
 
+/* sparql 1.0 r19 */
 offsetClause
     : OFFSET INTEGER
     ;
 
+/* sparql 1.1 update r20 */
 groupGraphPattern
 	: OPEN_CURLY_BRACE ( subSelect | groupGraphPatternSub ) CLOSE_CURLY_BRACE
     ;
 
+/* sparql 1.1 update r21 */
 groupGraphPatternSub
 	: triplesBlock? ( ( graphPatternNotTriples | filter ) DOT? triplesBlock? )*
     ;
 
+/* sparql 1.1 query */
 project
-	: SELECT (DISTINCT | REDUCED)? (ASTERISK | (variable | builtInCall | functionCall | ( OPEN_BRACE expression (AS variable)? CLOSE_BRACE )+ ))
+	: SELECT (DISTINCT | REDUCED)? 
+        (ASTERISK 
+        | (variable 
+            | builtInCall 
+            | functionCall 
+            | ( OPEN_BRACE expression (AS variable)? CLOSE_BRACE )+ ))
 	;
 
+/* sparql 1.1 update r22 */
 triplesBlock
-    : triplesSameSubject ( DOT triplesBlock? )?
+    : triplesSameSubjectPath ( DOT triplesBlock? )?
     ;
 
+/* sparql 1.1 update r23 */
 graphPatternNotTriples
-    : optionalGraphPattern | groupOrUnionGraphPattern | graphGraphPattern
+    : optionalGraphPattern 
+    | groupOrUnionGraphPattern 
+    | graphGraphPattern
+    | existsElt
+    | notExistsElt
     ;
 
+/* sparql 1.1 update r24 */
 optionalGraphPattern
     : OPTIONAL groupGraphPattern
     ;
 
+/* sparql 1.1 update r25 */
 graphGraphPattern
     : GRAPH varOrIRIref groupGraphPattern
     ;
 
+/* sparql 1.1 update r26 */
+existsElt
+    : EXISTS groupGraphPattern
+    ;
+
+/* sparql 1.1 update r27 */
+notExistsElt
+    : (UNSAID | NOT EXISTS) groupGraphPattern
+    ;
+
+/* sparql 1.1 update r28 */
 groupOrUnionGraphPattern
     : groupGraphPattern ( UNION groupGraphPattern )*
     ;
 
+/* sparql 1.1 update r29 */
 filter
     : FILTER constraint
     ;
 
+/* sparql 1.1 update r30 */
 constraint
-    : brackettedExpression | builtInCall | functionCall
+    : brackettedExpression
+    | builtInCall
+    | functionCall
     ;
 
+/* sparql 1.1 update r31 */
 functionCall
     : iriRef argList
     ;
 
+/* sparql 1.1 update r32 */
 argList
     : NIL | OPEN_BRACE expression ( COMMA expression )* CLOSE_BRACE
     ;
 
+/* sparql 1.0 r30 */
 constructTemplate
-    : OPEN_CURLY_BRACE constructTriples? CLOSE_CURLY_BRACE {}
+    : OPEN_CURLY_BRACE constructTriples? CLOSE_CURLY_BRACE
     ;
 
+/* sparql 1.0 r31 */
 constructTriples
     : triplesSameSubject ( DOT constructTriples? )?
     ;
 
+/* sparql 1.0 r32 */
 triplesSameSubject
     : varOrTerm propertyListNotEmpty
     | triplesNode propertyList
     ;
 
+/* sparql 1.1 update r34 */
 propertyListNotEmpty
     : verb objectList ( SEMICOLON ( verb objectList )? )*
     ;
 
+/* sparql 1.1 update r35 */
 propertyList
     : propertyListNotEmpty?
     ;
 
+/* sparql 1.1 update r36 */
 objectList
     : object ( COMMA object )*
     ;
 
+/* sparql 1.1 update r37 */
 object
     : graphNode
     ;
 
+/* sparql 1.1 update r38 */
 verb
     : varOrIRIref
     | A
     ;
 
+/* sparql 1.1 update r39 */
+triplesSameSubjectPath
+    : varOrTerm propertyListNotEmptyPath
+    | triplesNode propertyListPath
+    ;
+
+/* sparql 1.1 update r40 */
+propertyListNotEmptyPath
+    : (verbPath | verbSimple) objectList (SEMICOLON ((verbPath | verbSimple) objectList)? )*
+    ;
+
+/* sparql 1.1 update r41 */
+propertyListPath
+    : propertyListNotEmpty?
+    ;
+
+/* sparql 1.1 update r42 */
+verbPath
+    : path
+    ;
+
+/* sparql 1.1 update r43 */
+verbSimple
+	: variable
+	;
+
+/* sparql 1.1 update r44 */
+pathUnit
+	: path
+	;
+
+/* sparql 1.1 update r45 */
+path
+    :pathAlternative
+   	;
+
+/* sparql 1.1 update r46 */
+pathAlternative
+	: pathSequence
+	;
+
+/* sparql 1.1 update r47 */
+pathSequence
+	: pathEltOrReverse (DIVIDE pathEltOrReverse | '^' pathElt)*
+	;
+
+/* sparql 1.1 update r48 */
+pathElt
+	: pathPrimary pathMod?
+	;
+
+/* sparql 1.1 update r49 */
+pathEltOrReverse
+	: pathElt
+	| '^' pathElt
+	;
+
+/* sparql 1.1 update r50 */
+pathMod
+	: ASTERISK
+	| '?'
+	| PLUS
+	| OPEN_CURLY_BRACE ( INTEGER ( COMMA (CLOSE_CURLY_BRACE | INTEGER CLOSE_CURLY_BRACE ) | CLOSE_CURLY_BRACE ))
+	;
+	
+/* sparql 1.1 update r51 */
+pathPrimary
+	: iriRef
+	| A
+	| OPEN_BRACE path CLOSE_BRACE
+	;
+
+/* sparql 1.1 update r53 */
 triplesNode
     : collection
     | blankNodePropertyList
     ;
 
+/* sparql 1.1 update r54 */
 blankNodePropertyList
     : OPEN_SQUARE_BRACE propertyListNotEmpty CLOSE_SQUARE_BRACE
     ;
 
+/* sparql 1.1 update r55 */
 collection
     : OPEN_BRACE graphNode+ CLOSE_BRACE
     ;
 
+/* sparql 1.1 update r56 */
 graphNode
-    : varOrTerm | triplesNode
+    : varOrTerm 
+    | triplesNode
     ;
 
+/* sparql 1.1 update r57 */
 varOrTerm
     : variable
     | graphTerm
     ;
 
+/* sparql 1.1 update r58 */
 varOrIRIref
-    : variable | iriRef
+    : variable 
+    | iriRef
     ;
 
+/* sparql 1.1 update r59 */
 variable
     : VAR1 {echo "var1 = " . $VAR1.text . "\n";}
     | VAR2 {echo "var2 = " . $VAR2.text . "\n";}
     ;
 
+/* sparql 1.1 update r60 */
 graphTerm
     : iriRef
     | rdfLiteral
@@ -302,38 +444,58 @@ graphTerm
     | NIL
     ;
 
+/* sparql 1.1 update r61 */
 expression
     : conditionalOrExpression
     ;
 
+/* sparql 1.1 update r62 */
 conditionalOrExpression
     : conditionalAndExpression ( OR conditionalAndExpression )*
     ;
 
+/* sparql 1.1 update r63 */
 conditionalAndExpression
     : valueLogical ( AND valueLogical )*
     ;
 
+/* sparql 1.1 update r64 */
 valueLogical
     : relationalExpression
     ;
 
+/* sparql 1.1 update r65 */
 relationalExpression
-    : numericExpression ( EQUAL numericExpression | NOT_EQUAL numericExpression | LESS numericExpression | GREATER numericExpression | LESS_EQUAL numericExpression | GREATER_EQUAL numericExpression )?
+    : numericExpression 
+        ( EQUAL numericExpression 
+        | NOT_EQUAL numericExpression 
+        | LESS numericExpression 
+        | GREATER numericExpression 
+        | LESS_EQUAL numericExpression 
+        | GREATER_EQUAL numericExpression
+        )?
     ;
 
+/* sparql 1.1 update r66 */
 numericExpression
     : additiveExpression
     ;
 
+/* sparql 1.1 update r67 */
 additiveExpression
-    : multiplicativeExpression ( PLUS multiplicativeExpression | MINUS multiplicativeExpression | numericLiteralPositive | numericLiteralNegative )*
+    : multiplicativeExpression 
+        ( PLUS multiplicativeExpression 
+        | MINUS multiplicativeExpression 
+        | (numericLiteralPositive | numericLiteralNegative) (ASTERISK unaryExpression | DIVIDE unaryExpression)?
+        )*
     ;
 
+/* sparql 1.1 update r68 */
 multiplicativeExpression
     : unaryExpression ( ASTERISK unaryExpression | DIVIDE unaryExpression )*
     ;
 
+/* sparql 1.1 update r69 */
 unaryExpression
     : NOT_SIGN primaryExpression
     | PLUS primaryExpression
@@ -341,82 +503,115 @@ unaryExpression
     | primaryExpression
     ;
 
+/* sparql 1.1 update r70 */
 primaryExpression
-    : brackettedExpression | builtInCall | iriRefOrFunction | rdfLiteral | numericLiteral | booleanLiteral | variable
+    : brackettedExpression 
+    | builtInCall 
+    | iriRefOrFunction 
+    | rdfLiteral 
+    | numericLiteral 
+    | booleanLiteral 
+    | variable
+    | aggregate
     ;
 
+/* sparql 1.1 update r71 */
 brackettedExpression
     : OPEN_BRACE expression CLOSE_BRACE
     ;
 
+/* sparql 1.1 update r72 */
 builtInCall
     : STR OPEN_BRACE expression CLOSE_BRACE
     | LANG OPEN_BRACE expression CLOSE_BRACE
     | LANGMATCHES OPEN_BRACE expression COMMA expression CLOSE_BRACE
     | DATATYPE OPEN_BRACE expression CLOSE_BRACE
     | BOUND OPEN_BRACE variable CLOSE_BRACE
+    | COALESCE argList
+    | IF OPEN_BRACE expression COMMA expression COMMA expression CLOSE_BRACE
     | SAMETERM OPEN_BRACE expression COMMA expression CLOSE_BRACE
     | ISIRI OPEN_BRACE expression CLOSE_BRACE
     | ISURI OPEN_BRACE expression CLOSE_BRACE
     | ISBLANK OPEN_BRACE expression CLOSE_BRACE
     | ISLITERAL OPEN_BRACE expression CLOSE_BRACE
     | regexExpression
-	| SUM OPEN_BRACE aggregateExpression CLOSE_BRACE
-	| AVG OPEN_BRACE aggregateExpression CLOSE_BRACE
-	| COUNT OPEN_BRACE DISTINCT? (expression | ASTERISK)? CLOSE_BRACE
-	| MIN OPEN_BRACE aggregateExpression CLOSE_BRACE
-	| MAX OPEN_BRACE aggregateExpression CLOSE_BRACE
+    | existsFunc
+    | notExistsFunc
     ;
-
-aggregateExpression
-	: DISTINCT? expression
-	;
 
 subSelect
 	: project whereClause solutionModifier
 	;
 
-
-
+/* sparql 1.1 update r73 */
 regexExpression
     : REGEX OPEN_BRACE expression COMMA expression ( COMMA expression )? CLOSE_BRACE
     ;
 
+/* sparql 1.1 update r74 */
+existsFunc
+    : EXISTS groupGraphPattern
+    ;
+
+/* sparql 1.1 update r75 */
+notExistsFunc
+    : (UNSAID | NOT EXISTS) groupGraphPattern
+    ;
+
+/* sparql 1.1 update r76 */
+aggregate
+	: COUNT OPEN_BRACE (ASTERISK | variable | DISTINCT ( ASTERISK | variable)) CLOSE_BRACE
+	| SUM OPEN_BRACE expression CLOSE_BRACE
+	| MIN OPEN_BRACE expression CLOSE_BRACE
+	| MAX OPEN_BRACE expression CLOSE_BRACE
+	| AVG OPEN_BRACE expression CLOSE_BRACE
+	;
+
+/* sparql 1.1 update r77 */
 iriRefOrFunction
     : iriRef argList?
     ;
 
+/* sparql 1.1 update r78 */
 rdfLiteral
     : string ( LANGTAG | ( REFERENCE iriRef ) )?
     ;
 
+/* sparql 1.1 update r79 */
 numericLiteral
-    : numericLiteralUnsigned | numericLiteralPositive | numericLiteralNegative
+    : numericLiteralUnsigned 
+	| numericLiteralPositive 
+	| numericLiteralNegative
     ;
 
+/* sparql 1.1 update r80 */
 numericLiteralUnsigned
     : INTEGER
     | DECIMAL
     | DOUBLE
     ;
 
+/* sparql 1.1 update r81 */
 numericLiteralPositive
     : INTEGER_POSITIVE
     | DECIMAL_POSITIVE
     | DOUBLE_POSITIVE
     ;
 
+/* sparql 1.1 update r82 */
 numericLiteralNegative
     : INTEGER_NEGATIVE
     | DECIMAL_NEGATIVE
     | DOUBLE_NEGATIVE
     ;
 
+/* sparql 1.1 update r83 */
 booleanLiteral
     : TRUE
     | FALSE
     ;
 
+/* sparql 1.1 update r84 */
 string
     : STRING_LITERAL1
     | STRING_LITERAL2
@@ -424,22 +619,25 @@ string
     | STRING_LITERAL_LONG2
     ;
 
+/* sparql 1.1 update r85 */
 iriRef
     : IRI_REF
     | prefixedName
     ;
 
+/* sparql 1.1 update r86 */
 prefixedName
     : PNAME_LN
     | PNAME_NS
     ;
 
+/* sparql 1.1 update r87 */
 blankNode
     : BLANK_NODE_LABEL
     | ANON
     ;
 
-// $>
+// Parser end $>
 
 BASE
     : ('B'|'b')('A'|'a')('S'|'s')('E'|'e')
@@ -663,6 +861,14 @@ TRUE
 FALSE
     : ('F'|'f')('A'|'a')('L'|'l')('S'|'s')('E'|'e')
     ;
+
+IF
+	: ('I'|'i')('F'|'f')
+	;
+
+COALESCE
+	: ('C'|'c')('O'|'o')('A'|'a')('L'|'l')('E'|'e')('S'|'s')('C'|'c')('E'|'e')
+	;
 
 IRI_REF
     : LESS ( options {greedy=false;} : ~(LESS | GREATER | '"' | OPEN_CURLY_BRACE | CLOSE_CURLY_BRACE | '|' | '^' | '\\' | '`' | ('\u0000'..'\u0020')) )* GREATER
@@ -922,6 +1128,5 @@ OPEN_SQUARE_BRACE
 CLOSE_SQUARE_BRACE
     : ']'
     ;
-
 
 // $>
