@@ -10,12 +10,11 @@ options {
   k = 1;
 }
 
-
 // $<Parser
 
 /* sparql 1.0 r1 */
-query
-    : prologue ( selectQuery | constructQuery | describeQuery | askQuery ) EOF
+query11
+    : prologue ( selectQuery | constructQuery | describeQuery | askQuery | update | manage) EOF
     ;
 
 /* sparql 1.0 r2 */
@@ -33,9 +32,11 @@ prefixDecl
     : PREFIX PNAME_NS IRI_REF
     ;
 
+/*
 updateUnit
     : prologue (update | manage)*
     ;
+*/
 
 update
     : modify
@@ -73,8 +74,10 @@ insertTemplate
     : (INTO? iriRef)* constructTemplate updatePattern?
     ;
 
+/* typo in the official grammar? */
+/* sparql 1.1 updadte r6 */
 graphIri
-    : GRAPH iriRef
+    : GRAPH? iriRef
     ;
 
 load
@@ -106,8 +109,8 @@ updatePattern
 selectQuery
     : SELECT ( DISTINCT | REDUCED )? ( variable+ | ASTERISK ) datasetClause* whereClause solutionModifier 
 {
-//echo "whereClause= " . $whereClause.text . "\n";
-//echo "selectQuery= " . $selectQuery.text . "\n";
+echo "whereClause= " . $whereClause.text . "\n";
+echo "selectQuery= " . $selectQuery.text . "\n";
 }
     ;
 
