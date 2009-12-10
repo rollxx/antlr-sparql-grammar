@@ -6,7 +6,6 @@
 grammar Sparql;
 
 options {
-  language = Php;
   k = 1;
 }
 
