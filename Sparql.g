@@ -429,8 +429,8 @@ varOrIRIref
 
 /* sparql 1.1 update r59 */
 variable
-    : VAR1 {echo "var1 = " . $VAR1.text . "\n";}
-    | VAR2 {echo "var2 = " . $VAR2.text . "\n";}
+    : VAR1
+    | VAR2
     ;
 
 /* sparql 1.1 update r60 */
@@ -871,7 +871,6 @@ COALESCE
 
 IRI_REF
     : LESS ( options {greedy=false;} : ~(LESS | GREATER | '"' | OPEN_CURLY_BRACE | CLOSE_CURLY_BRACE | '|' | '^' | '\\' | '`' | ('\u0000'..'\u0020')) )* GREATER
-    {\$this->setText(substr(\$this->getText(), 1, strlen(\$this->getText()) - 2)); }
     ;
 
 PNAME_NS
@@ -883,11 +882,11 @@ PNAME_LN
     ;
 
 VAR1
-    : '?' v=VARNAME {\$this->setText($v.text); }
+    : '?' v=VARNAME
     ;
 
 VAR2
-    : '$' v=VARNAME {\$this->setText($v.text); }
+    : '$' v=VARNAME
     ;
 
 LANGTAG
@@ -1024,7 +1023,7 @@ PN_LOCAL
     ;
 
 BLANK_NODE_LABEL
-    : '_:' t=PN_LOCAL {\$this->setText($t.text); }
+    : '_:' t=PN_LOCAL
     ;
 
 REFERENCE
