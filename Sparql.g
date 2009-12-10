@@ -108,10 +108,6 @@ updatePattern
 /* sparql 1.0 r5 */
 selectQuery
     : SELECT ( DISTINCT | REDUCED )? ( variable+ | ASTERISK ) datasetClause* whereClause solutionModifier 
-{
-echo "whereClause= " . $whereClause.text . "\n";
-echo "selectQuery= " . $selectQuery.text . "\n";
-}
     ;
 
 /* sparql 1.0 r6 */
