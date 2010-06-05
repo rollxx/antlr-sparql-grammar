@@ -1,4 +1,5 @@
 /*
+ * depricated see Sparql11.g
  * Sparql 1.1 grammar
  *
 */

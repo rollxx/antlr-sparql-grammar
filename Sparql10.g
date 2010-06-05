@@ -3,20 +3,11 @@
  *
 */
 
-grammar Sparql10 ;
+parser grammar Sparql10 ;
 
-
-options {
-  language = Java;
-//  k = 1;
-//  memoize = true;
+options{
+  tokenVocab = Tokenizer;
 }
-
-import Tokens ;
-
-
-
-fakestart : 'xxx';
 
 /* sparql 1.0 r1 */
 start 
@@ -25,7 +16,7 @@ start
         | constructQuery 
         | describeQuery 
         | askQuery 
-        ) EOF 
+        )
     ;
 
 /* sparql 1.0 r2 */

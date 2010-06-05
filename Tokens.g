@@ -1,16 +1,10 @@
 /*
+ * depricated
  * Sparql 1.0 lexer grammar
  *
 */
 
 lexer grammar Tokens ;
-
-
-options {
-  language = Java;
-//  k = 1;
-//  memoize = true;
-}
 
 
 BASE

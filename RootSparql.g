@@ -6,6 +6,6 @@ options {
   memoize=true;
 }
 
-import Tokenizer, Sparql11;
+import Tokenizer, Sparql11, Sparql10;
 
-parse	:	top;
+parse	:	top | start EOF;
