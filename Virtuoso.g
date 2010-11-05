@@ -3,7 +3,7 @@ parser grammar Virtuoso;
 options{
 tokenVocab = Tokenizer;
 }
-//import Sparql11;
+import Sparql11Virtuoso;
 
 queryV
   :

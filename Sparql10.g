@@ -10,7 +10,7 @@ options{
 }
 
 /* sparql 1.0 r1 */
-start 
+start
     : prologue ( 
         selectQuery
         | constructQuery 

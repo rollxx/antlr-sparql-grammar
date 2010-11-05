@@ -49,12 +49,21 @@ DROP
   :
   'drop'
   ;
-  
-DEFAULT	:	'default';
 
-SERVICE	:	'service';
+DEFAULT
+  :
+  'default'
+  ;
 
-MINUS_P	:	'minus_p';//??????
+SERVICE
+  :
+  'service'
+  ;
+
+MINUS_P
+  :
+  'minus'
+  ;
 
 EXISTS
   :
@@ -76,15 +85,40 @@ COUNT
   'count'
   ;
 
-SUM	:	'sum';
-MIN	:	'min';
-MAX	:	'max';
-AVG	:	'avg';
-SAMPLE	:	'sample';
+SUM
+  :
+  'sum'
+  ;
+
+MIN
+  :
+  'min'
+  ;
+
+MAX
+  :
+  'max'
+  ;
+
+AVG
+  :
+  'avg'
+  ;
+
+SAMPLE
+  :
+  'sample'
+  ;
+
 GROUP_CONCAT
-	:	'group_concat';
+  :
+  'group_concat'
+  ;
+
 SEPARATOR
-	:	'separator';
+  :
+  'separator'
+  ;
 
 COALESCE
   :
@@ -110,8 +144,11 @@ PREFIX
   :
   'prefix'
   ;
-  
-IN	:	'in';
+
+IN
+  :
+  'in'
+  ;
 
 NOT
   :
@@ -198,9 +235,15 @@ OFFSET
   'offset'
   ;
 
-BINDINGS:	'bindings';
+BINDINGS
+  :
+  'bindings'
+  ;
 
-WITH	:	'with';
+WITH
+  :
+  'with'
+  ;
 
 OPTIONAL
   :
@@ -262,11 +305,30 @@ SAMETERM
   'sameterm'
   ;
 
-IRI	:	'iri';
-URI	:	'uri';
-BNODE	:	'bnode';
-STRLANG	:	'strlang';
-STRDT	:	'strdt';
+IRI
+  :
+  'iri'
+  ;
+
+URI
+  :
+  'uri'
+  ;
+
+BNODE
+  :
+  'bnode'
+  ;
+
+STRLANG
+  :
+  'strlang'
+  ;
+
+STRDT
+  :
+  'strdt'
+  ;
 
 ISIRI
   :
@@ -286,6 +348,11 @@ ISBLANK
 ISLITERAL
   :
   'isliteral'
+  ;
+
+ISNUMERIC
+  :
+  'isnumeric'
   ;
 
 REGEX
@@ -424,13 +491,13 @@ STRING_LITERAL1
   '\''
   ( options {greedy=false;}:
     ~(
-       '\''
-       | '\\'
-       | '\n'
-       | '\r'
+      '\''
+      | '\\'
+      | '\n'
+      | '\r'
      )
-    |
-ECHAR | UNICODE_CHAR
+    | ECHAR
+    | UNICODE_CHAR
   )*
   '\''
   ;
@@ -440,14 +507,13 @@ STRING_LITERAL2
   '"'
   ( options {greedy=false;}:
     ~(
-       '\"'
-       | '\\'
-       | '\n'
-       | '\r'
+      '\"'
+      | '\\'
+      | '\n'
+      | '\r'
      )
-   | 
-
-ECHAR | UNICODE_CHAR
+    | ECHAR
+    | UNICODE_CHAR
   )*
   '"'
   ;
@@ -465,7 +531,8 @@ STRING_LITERAL_LONG1
         '\''
         | '\\'
        )
-      | ECHAR | UNICODE_CHAR
+      | ECHAR
+      | UNICODE_CHAR
     )
   )*
   '\'\'\''
@@ -484,7 +551,8 @@ STRING_LITERAL_LONG2
         '"'
         | '\\'
        )
-      | ECHAR | UNICODE_CHAR
+      | ECHAR
+      | UNICODE_CHAR
     )
   )*
   '"""'
@@ -513,24 +581,27 @@ WS
     | '\t'
     | EOL
   )+
-  {$channel=HIDDEN; }
+  
+  {
+   $channel = HIDDEN;
+  }
   ;
 
 fragment
 PN_CHARS_BASE
   :
   'a'..'z'
-//  | '\u00C0'..'\u00D6'
-//  | '\u00D8'..'\u00F6'
-//  | '\u00F8'..'\u02FF'
-//  | '\u0370'..'\u037D'
-//  | '\u037F'..'\u1FFF'
-//  | '\u200C'..'\u200D'
-//  | '\u2070'..'\u218F'
-//  | '\u2C00'..'\u2FEF'
-//  | '\u3001'..'\uD7FF'
-//  | '\uF900'..'\uFDCF'
-//  | '\uFDF0'..'\uFFFD'
+  //  | '\u00C0'..'\u00D6'
+  //  | '\u00D8'..'\u00F6'
+  //  | '\u00F8'..'\u02FF'
+  //  | '\u0370'..'\u037D'
+  //  | '\u037F'..'\u1FFF'
+  //  | '\u200C'..'\u200D'
+  //  | '\u2070'..'\u218F'
+  //  | '\u2C00'..'\u2FEF'
+  //  | '\u3001'..'\uD7FF'
+  //  | '\uF900'..'\uFDCF'
+  //  | '\uFDF0'..'\uFFFD'
   ;
 
 fragment
@@ -550,9 +621,9 @@ VARNAME
   (
     PN_CHARS_U
     | ('0'..'9')
-//    | '\u00B7'
-//    | '\u0300'..'\u036F'
-//    | '\u203F'..'\u2040'
+  //    | '\u00B7'
+  //    | '\u0300'..'\u036F'
+  //    | '\u203F'..'\u2040'
   )*
   ;
 
@@ -562,9 +633,9 @@ PN_CHARS
   PN_CHARS_U
   | MINUS
   | ('0'..'9')
-//  | '\u00B7'
-//  | '\u0300'..'\u036F'
-//  | '\u203F'..'\u2040'
+  //  | '\u00B7'
+  //  | '\u0300'..'\u036F'
+  //  | '\u203F'..'\u2040'
   ;
 
 fragment
@@ -611,6 +682,11 @@ AND
   '&&'
   ;
 
+PIPE
+  :
+  '|'
+  ;
+
 OR
   :
   '||'
@@ -618,7 +694,10 @@ OR
 
 COMMENT
   :
-  '#' .* EOL { $channel = HIDDEN; }
+  '#' .* EOL 
+            {
+             $channel = HIDDEN;
+            }
   ;
 
 fragment
@@ -737,14 +816,37 @@ QUESTION_MARK_LABEL
   :
   '?'
   ;
+
 fragment
 UNICODE_CHAR
-   :'\\''u' HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT
-   ;
+  :
+  '\\' 'u' HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT
+  ;
 
 fragment
 HEX_DIGIT
-   : '0'..'9'|'a'..'f'|'A'..'F'
-   ;
+  :
+  '0'..'9'
+  | 'a'..'f'
+  | 'A'..'F'
+  ;
 
-UNDEF	:	'undef';
+UNDEF
+  :
+  'undef'
+  ;
+
+//BACKQUOTE
+//  :
+//  '`'
+//  ;
+//
+//PLUSGREATER
+//  :
+//  '+>'
+//  ;
+//
+//ASTERISKGREATER
+//  :
+//  '*>'
+//  ;
